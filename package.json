@@ -9,8 +9,8 @@
   "scripts": {
     "compile": "tsc -w",
     "test": "supervisor dist/index.js",
-    "start": "forever -o ./output.log -a start dist/index.js",
-    "stop": "forever stop dist/index.js"
+    "start": "forever -o ./output.log -a --uid naverblogdownloader start dist/index.js",
+    "stop": "forever stop naverblogdownloader"
   },
   "devDependencies": {
     "@types/node": "^17.0.30",
