@@ -37,8 +37,8 @@ async function doJob(config) {
                     .split("'.replace(/\\\\'/g, ''));")[0]);
                 await Promise.all(files.map(async (file) => {
                     try {
-                        await (0, download_1.downloadFile)(file.encodedAttachFileUrl, download.destination, file.encodedAttachFileNameByTruncate);
-                        console.log(`${file.encodedAttachFileNameByTruncate} 다운로드 완료`);
+                        await (0, download_1.downloadFile)(file.encodedAttachFileUrl, download.destination, file.encodedAttachFileName);
+                        console.log(`${file.encodedAttachFileName} 다운로드 완료`);
                     }
                     catch (err) {
                         console.error(err);

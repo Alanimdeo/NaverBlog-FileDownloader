@@ -85,12 +85,8 @@ async function doJob(config: Config) {
               await Promise.all(
                 files.map(async (file) => {
                   try {
-                    await downloadFile(
-                      file.encodedAttachFileUrl,
-                      download.destination,
-                      file.encodedAttachFileNameByTruncate
-                    );
-                    console.log(`${file.encodedAttachFileNameByTruncate} 다운로드 완료`);
+                    await downloadFile(file.encodedAttachFileUrl, download.destination, file.encodedAttachFileName);
+                    console.log(`${file.encodedAttachFileName} 다운로드 완료`);
                   } catch (err) {
                     console.error(err);
                   }
