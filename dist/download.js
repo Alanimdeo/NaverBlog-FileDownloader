@@ -4,18 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.downloadFile = void 0;
-const fs_1 = require("fs");
 const promises_1 = require("fs/promises");
-const stream_1 = require("stream");
-const util_1 = require("util");
-const axios_1 = __importDefault(require("axios"));
-const streamPipeline = (0, util_1.promisify)(stream_1.pipeline);
+const fs_1 = require("fs");
+const https_1 = __importDefault(require("https"));
 async function downloadFile(url, path, filename) {
     return new Promise(async (resolve, reject) => {
-        const response = await axios_1.default.get(url);
-        if (response.status !== 200) {
-            return reject(new Error(`Unexpected response ${response.statusText}`));
-        }
         await (0, promises_1.readdir)(path)
             .catch(async (err) => {
             if (err.code === "ENOENT") {
@@ -26,12 +19,30 @@ async function downloadFile(url, path, filename) {
             }
         })
             .finally(async () => {
-            await streamPipeline(response.data, (0, fs_1.createWriteStream)((path.endsWith("/") ? path : path + "/") + filename))
-                .then(() => {
-                resolve();
-            })
-                .catch((err) => {
-                reject(err);
+            const splitUrl = url.replace(/(http|https):\/\//, "").split("/");
+            const host = splitUrl.shift();
+            const pathname = "/" + splitUrl.join("/");
+            console.log(host, pathname);
+            https_1.default.get({
+                host,
+                path: pathname,
+                headers: {
+                    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.41 Safari/537.36",
+                },
+            }, (res) => {
+                res.on("error", (err) => {
+                    return reject(err);
+                });
+                const file = (0, fs_1.createWriteStream)((path.endsWith("/") ? path : path + "/") + filename);
+                res.pipe(file);
+                res.on("end", () => {
+                    file.close();
+                    return resolve();
+                });
+                file.on("error", (err) => {
+                    file.close();
+                    return reject(err);
+                });
             });
         });
     });
