@@ -7,7 +7,8 @@ const promises_1 = require("fs/promises");
 const axios_1 = __importDefault(require("axios"));
 const rss_to_json_1 = __importDefault(require("rss-to-json"));
 const download_1 = require("./download");
-async function doJob(config) {
+async function doJob() {
+    const config = JSON.parse((await (0, promises_1.readFile)("./config.json")).toString());
     await Promise.all(
     // 오래된 다운로드 목록 삭제
     config.blogs.map(async (blog) => {
@@ -48,10 +49,6 @@ async function doJob(config) {
         }));
     }));
     await (0, promises_1.writeFile)("./config.json", JSON.stringify(config, null, 2));
-    console.log("모든 작업 완료!");
+    setTimeout(doJob, config.interval);
 }
-(0, promises_1.readFile)("./config.json").then((result) => {
-    const config = JSON.parse(result.toString());
-    doJob(config); // setInterval은 처음 시작 시 작동하지 않음
-    setInterval(doJob, config.interval * 1000, config);
-});
+doJob();

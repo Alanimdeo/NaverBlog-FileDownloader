@@ -50,7 +50,8 @@ export interface NaverBlogDownloadInfo {
   ahfLicenseYn: "true" | "false";
 }
 
-async function doJob(config: Config) {
+async function doJob() {
+  const config: Config = JSON.parse((await readFile("./config.json")).toString());
   await Promise.all(
     // 오래된 다운로드 목록 삭제
     config.blogs.map(async (blog) => {
@@ -99,11 +100,7 @@ async function doJob(config: Config) {
     })
   );
   await writeFile("./config.json", JSON.stringify(config, null, 2));
-  console.log("모든 작업 완료!");
+  setTimeout(doJob, config.interval);
 }
 
-readFile("./config.json").then((result) => {
-  const config: Config = JSON.parse(result.toString());
-  doJob(config); // setInterval은 처음 시작 시 작동하지 않음
-  setInterval(doJob, config.interval * 1000, config);
-});
+doJob();
