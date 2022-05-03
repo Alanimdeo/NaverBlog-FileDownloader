@@ -49,6 +49,6 @@ async function doJob() {
         }));
     }));
     await (0, promises_1.writeFile)("./config.json", JSON.stringify(config, null, 2));
-    setTimeout(doJob, config.interval);
+    setTimeout(doJob, config.interval * 1000);
 }
 doJob();

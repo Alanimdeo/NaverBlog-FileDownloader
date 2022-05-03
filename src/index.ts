@@ -100,7 +100,7 @@ async function doJob() {
     })
   );
   await writeFile("./config.json", JSON.stringify(config, null, 2));
-  setTimeout(doJob, config.interval);
+  setTimeout(doJob, config.interval * 1000);
 }
 
 doJob();
