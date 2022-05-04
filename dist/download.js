@@ -22,7 +22,6 @@ async function downloadFile(url, path, filename) {
             const splitUrl = url.replace(/(http|https):\/\//, "").split("/");
             const host = splitUrl.shift();
             const pathname = "/" + splitUrl.join("/");
-            console.log(host, pathname);
             https_1.default.get({
                 host,
                 path: pathname,
